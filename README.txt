@@ -4,7 +4,7 @@ for exemple C:/user/userprofile/document/openlca2bw
 
 the main functiopn to import olca database to brightway is load_openLCA_IPC()
 
-To import you need to lauch OpenLCA, to open your database and activate the IPC protocol (Tool/Developer tools/IPC server)
+To import you need to lauch OpenLCA, to open your database and activate the IPC protocol from the OpenLCA software (Tool/Developer tools/IPC server)
 The default port value is 8080
 
 The function has default values and can be run without entries, nontheless all processes will be stored in one unique bw2 database ('EcoInvent').
