@@ -1,3 +1,5 @@
+These a Python package to import OpenLCA database to the brightway python environment
+
 To install
 pip install <path to setup folder>
 for exemple C:/user/userprofile/document/openlca2bw
@@ -16,3 +18,14 @@ my_dict = {'FirstDatabase': ['Folder1','Folder2',...],'SecondDatabase': 'Folder3
 load_openLCA_IPC(port = 8080, project_name="Open_imports",overwrite=False, 
                      nonuser_db_name = 'EcoInvent',check_ecoinvent_exc=False,
                      user_databases={})
+                     
+                     
+                     
+                     
+OpenLCA database has many exceptions and depending on your database some errors may araise. Feel free to share issues and potential correction.
+
+Next steps for this package :
+- Errors and exceptions corrections
+- Implementation of function that update a database, rather than uploading the all database
+- Implementation of function that import in brightway OpenLCA data from JSON dtabase (.zip)
+- Computing and coding optimization
