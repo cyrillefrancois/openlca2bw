@@ -1,6 +1,6 @@
 To install
 pip install <path to setup folder>
-for exemple C:/user/userprofile/document/openlca_extractor
+for exemple C:/user/userprofile/document/openlca2bw
 
 the main functiopn to import olca database to brightway is load_openLCA_IPC()
 
