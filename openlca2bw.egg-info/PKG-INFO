@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: openlca2bw
+Version: 0.1
+Summary: A Python package to extract and write an LCA database from OpenLCA to Brightway2
+Home-page: UNKNOWN
+Author: Cyrille François
+Author-email: UNKNOWN
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN

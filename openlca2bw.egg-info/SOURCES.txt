@@ -1,0 +1,12 @@
+setup.py
+openlca2bw/__init__.py
+openlca2bw/bw_write.py
+openlca2bw/main.py
+openlca2bw/utils.py
+openlca2bw.egg-info/PKG-INFO
+openlca2bw.egg-info/SOURCES.txt
+openlca2bw.egg-info/dependency_links.txt
+openlca2bw.egg-info/top_level.txt
+openlca2bw/IPC_protocol/__init__.py
+openlca2bw/IPC_protocol/ipc_extration.py
+openlca2bw/IPC_protocol/tables.py
