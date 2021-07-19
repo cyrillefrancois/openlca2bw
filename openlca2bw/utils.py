@@ -4,6 +4,8 @@ Created on Fri Jul  2 22:09:12 2021
 
 @author: cyrille.francois
 """
+import brightway2 as bw
+import pandas as pd
 
 def flattenNestedList(nestedList):
     ''' Converts a nested list to a flat list '''
@@ -23,6 +25,10 @@ def flattenNestedList(nestedList):
         flatList.append(nestedList)
     return flatList
 
+def get_item(list, str_id=str):
+    for f in list:
+        if f['@id'] == str_id:
+            return f
 
 def return_attribute(data,elements):
     if not type(elements) is tuple:
@@ -63,3 +69,15 @@ def uncertainty_convert(uncertainty_dict):
             })
     else:
         return(None)
+
+def main_flow_table():
+    DF_ids = pd.DataFrame(columns=['database','code','flow'])
+    for db in bw.databases:
+        if db == 'biosphere3':
+            continue
+        for act in bw.Database(db):
+            DF_ids = DF_ids.append({k: v for k, v in act.items() if k in ['database','code','flow']},ignore_index=True)
+    return DF_ids
+
+
+        
