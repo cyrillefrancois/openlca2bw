@@ -45,8 +45,11 @@ Others options are available in this function:
                      
 example to run function:
 > import openlca2bw
+>
 > my_dict = {'FirstDatabase': ['Folder1','Folder2'],'SecondDatabase': 'Folder3'}
+>
 > #after activating IPC server from OpenLCA
+>
 > load_openLCA_IPC(project_name="Example_Name",user_databases=my_dict)
                      
 The update_openLCA_IPC() function only import specified elements to an existing brightway project.
@@ -87,8 +90,11 @@ Others options are available in this function:
 
 example to run function:
 > import openlca2bw
+>
 > my_dict = {'FirstDatabase': ['Folder1','Folder2'],'SecondDatabase': 'Folder3'}
+>
 > #after exporting json zip from OpenLCA
+>
 > load_openLCA_Json(path_zip='C:/user/userprofile/document/olcaJSON.zip',user_databases=my_dict)
 
 The update_openLCA_Json() function only import specified elements to an existing brightway project.
