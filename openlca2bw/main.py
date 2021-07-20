@@ -311,7 +311,7 @@ def update_openLCA_Json(path_zip=str, project_name="Open_imports",update_biosphe
     db_list_id = dict(zip([db for db in bw.databases if db != 'biosphere3'],db_list_id))
     [db_list_id.pop(key,None) for key in update_databases.keys()]
     print("\nImporting processes from OpenLCA\n")
-    dict_processes, user_parameters, list_missed_providers = json_db.extract_list_process(databases_names = update_databases, dict_list_id=db_list_id,exclude_S = exclude_S)
+    dict_processes, user_parameters, list_missed_providers = json_db.extract_list_process(databases_names = update_databases, dict_list_id=db_list_id,exclude_S = exclude_S,update=True)
     for db in list(update_databases.keys()):
         if db in list(bw.databases):
             del bw.databases[db]

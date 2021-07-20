@@ -6,6 +6,7 @@ Created on Fri Jul 16 14:01:02 2021
 """
 import json
 import pyprind
+import brightway2 as bw
 from ..utils import return_attribute, get_item, uncertainty_convert, flattenNestedList
 from .data import Json_database
 from bw2io import normalize_units as normalize_unit
@@ -79,12 +80,32 @@ class Json_All(Json_database):
         print(pbar)
         return(list_methods)
     
-    def U_equivalent(self, S_id=str):
-        p_S = get_item(self.processes,S_id)
+    # def U_equivalent(self, S_id=str):
+    #     p_S = get_item(self.processes,S_id)
+    #     if type(p_S['location']) is dict:
+    #         p_S['location'] = self.location_table.loc[return_attribute(p_S,('location','@id'))].values[0] 
+    #     for d in self.processes:
+    #         if d['name'][:-2] == return_attribute(p_S,'name')[:-2] and d['name'][-2:] == ' U':
+    #             if type(d['location']) is dict:
+    #                 d['location'] = self.location_table.loc[return_attribute(d,('location','@id'))].values[0]    
+    #             if return_attribute(d,'location') == return_attribute(p_S,'location'):
+    #                 return d
+
+    def U_equivalent(self, p_S):
+        # p_S = get_item(self.processes,S_id)
+        if return_attribute(p_S,'location') is None:
+            p_S.update({'location': None})
+        if type(p_S['location']) is dict:
+            p_S['location'] = self.location_table.loc[return_attribute(p_S,('location','@id'))].values[0] 
         for d in self.processes:
             if d['name'][:-2] == return_attribute(p_S,'name')[:-2] and d['name'][-2:] == ' U':
-                if return_attribute(d,('location','@id')) == return_attribute(p_S,('location','@id')):
-                    return d
+                if return_attribute(d,'location') is None:
+                    if return_attribute(p_S,'location') is None:
+                        return d['@id'] 
+                elif type(d['location']) is dict:
+                    d['location'] = self.location_table.loc[return_attribute(d,('location','@id'))].values[0]    
+                if return_attribute(d,'location') == return_attribute(p_S,'location'):
+                    return d['@id'] 
     
     def keep_U_process(self, p): 
         if p['name'][-2:] != ' S':
@@ -92,7 +113,11 @@ class Json_All(Json_database):
         else: 
             for d in self.processes:
                 if d['name'] == p['name'][:-2]+' U':
-                    if return_attribute(d,('location','@id')) == return_attribute(p,('location','@id')):
+                    if type(d['location']) is dict:
+                        d['location'] = self.location_table.loc[return_attribute(d,('location','@id'))].values[0]
+                    if type(p['location']) is dict:
+                        p['location'] = self.location_table.loc[return_attribute(p,('location','@id'))].values[0]
+                    if return_attribute(d,'location') == return_attribute(p,'location'):
                         return False
         return True
     
@@ -217,7 +242,7 @@ class Json_All(Json_database):
         print(str(len(list_process))+" nonuser processes find and read\n")
         return list_process, list_process_parameters, list_missed_providers
     
-    def extract_list_process(self, databases_names, dict_list_id={}, exclude_S=False):
+    def extract_list_process(self, databases_names, dict_list_id={}, exclude_S=False,update=False):
         processes = self.processes
         conv_loc = self.location_table
         db_names = list(databases_names.keys())
@@ -241,6 +266,10 @@ class Json_All(Json_database):
         db_list_id = dict(zip(db_names,db_list_id))
         list_process_parameters = []
         list_missed_providers = []
+        if update:
+            for db in bw.databases:
+                if db != 'biosphere3' and db not in db_names:
+                    self.processes.extend([{'@id': act['code'],'name': act['name'],'location': return_attribute(act,'location')} for act in bw.Database(db)])
         for db in db_names:
             pbar = pyprind.ProgBar(len(db_list_id[db]), title="Extracting "+str(len(db_list_id[db]))+" processes from OpenLCA for "+str(db)+" database:")    
             list_process = []
@@ -248,6 +277,8 @@ class Json_All(Json_database):
                 if p['@id'] not in db_list_id[db]:
                     continue
                 pbar.update(item_id = len(list_process)+1)
+                if return_attribute(p,'exchanges') is None:
+                    print(p)
                 classif = [return_attribute(p, ('category','name'))]
                 classif.insert(0,return_attribute(p, ('category','categoryPath')))
                 exch = return_attribute(p,'exchanges')
@@ -320,7 +351,8 @@ class Json_All(Json_database):
                                             })
                         else:
                             if exclude_S and self.keep_U_process(return_attribute(exc,'defaultProvider')) == False:
-                                id_provider = self.U_equivalent(return_attribute(exc,('defaultProvider','@id')))
+                                # id_provider = self.U_equivalent(return_attribute(exc,('defaultProvider','@id')))
+                                id_provider = self.U_equivalent(return_attribute(exc,'defaultProvider'))
                             else:
                                 id_provider = return_attribute(exc,('defaultProvider','@id'))
                             exc_arg.update({'type': 'technosphere',
@@ -350,5 +382,5 @@ class Json_All(Json_database):
                     self.parameters.extend(return_attribute(p,'parameters'))
                     list_process_parameters.append(((db,return_attribute(p,'@id')), [p['@id'] for p in return_attribute(p,'parameters')]))
             db_data.append(list_process)
-            print(pbar)
+        print(pbar)
         return dict(zip(db_names, db_data)), list_process_parameters, list_missed_providers    

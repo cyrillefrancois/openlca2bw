@@ -99,23 +99,28 @@ def check_exchanges_units(conv_factors, databases_names):
     for db in flattenNestedList(databases_names):
         for act in bw.Database(db):
             for exc in act.exchanges():
-                if exc.unit != exc['unit']:
-                    i += 1
-                    f0 = conv_factors[conv_factors.unit_name == exc['unit']].conv_factor.values[0]
-                    f1 = conv_factors[conv_factors.unit_name == exc.unit].conv_factor.values[0]
-                    cf_units = f0 / f1
-                    exc['unit'] = exc.unit
-                    exc['amount'] = exc['amount'] * cf_units
-                    if 'formula' in exc:
-                        exc['formula'] = exc['formula']+" * "+str(cf_units)
-                    exc.save()    
+                try:
+                    if exc.unit != exc['unit']:
+                        i += 1
+                        f0 = conv_factors[conv_factors.unit_name == exc['unit']].conv_factor.values[0]
+                        f1 = conv_factors[conv_factors.unit_name == exc.unit].conv_factor.values[0]
+                        cf_units = f0 / f1
+                        exc['unit'] = exc.unit
+                        exc['amount'] = exc['amount'] * cf_units
+                        if 'formula' in exc:
+                            exc['formula'] = exc['formula']+" * "+str(cf_units)
+                        exc.save()  
+                except:
+                    print("Error with activity "+str(act)+" exchange with '"+str(exc['name'])+"' is missing (check provider)\n")
+                    act.delete()
+                    print("Activity deleted !!!")
     print(str(i)+" exchanges modified to match units")
     
 
 def single_provider_retriver(list_missed_providers):
     if len(list_missed_providers) == 0:
         return
-    print("Reseach of not defined providers\n")
+    print("Reseach of "+str(len(list_missed_providers))+"not defined providers\n")
     activity_main_flow = main_flow_table()
     for exc in list_missed_providers:
         try:
