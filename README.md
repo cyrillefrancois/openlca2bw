@@ -9,7 +9,7 @@ Direct from github
 
 If folder downloaded 
 
-> pip install path to setup folder
+> pip install path_to_setup_folder
 
 for exemple C:/user/userprofile/document/openlca2bw
 
