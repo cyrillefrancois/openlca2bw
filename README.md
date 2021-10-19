@@ -9,11 +9,11 @@ Direct from github
 
 If folder downloaded 
 
-> pip install <path to setup folder>
+> pip install path_to_setup_folder
 
 for exemple C:/user/userprofile/document/openlca2bw
 
-the main functions to import olca database to brightway are load_openLCA_IPC() (to imort from IPC protocol) or load_openLCA_Json() (to import from a .zip json extraction)
+the main functions to import olca database to brightway are load_openLCA_IPC() (to import from IPC protocol) or load_openLCA_Json() (to import from a .zip json extraction)
 
 ## IPC protocol importation
 
