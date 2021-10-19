@@ -110,7 +110,7 @@ With this function no need to export the all database from OpenLCA, only modifie
 - update_biosphere: boolean -> if True the program import all elementary flows and replace the existing 'biosphere3' database in brightway
 - update_methods: boolean -> if True the program will import LCIA methods and write the new methods or replace an old one if same differents are presents
 - update_databases: dictionnary -> a dictionnary with keys representing the brightway databases names and the values for each key representing the list of openLCA folders related (see previous user_databases format)
-- exclude_S: boolean -> if True the program will not import nonuser processes that are System process (LCI) if a corresponding Unit process is available, the importation of a full System process database is long (3 hours for EcoInvent) 
+- exclude_S: boolean -> if True the program will not import nonuser processes that are System process (LCI) if a corresponding Unit process is available, the importation of a full System process databse is long (3 hours for EcoInvent) 
 
 
                  

@@ -138,21 +138,29 @@ class ClientAll(ClientData):
                 if return_attribute(exc,('flow','flowType')) == 'ELEMENTARY_FLOW':
                     if return_attribute(exc,'input') == True and return_attribute(exc,('flow','categoryPath'))[1] != 'Resource':
                         cf_IO = -1
-                if return_attribute(exc,('flow','flowType')) == 'PRODUCT_FLOW' and return_attribute(exc,'input') == False:
+                if return_attribute(exc,('flow','flowType')) == 'PRODUCT_FLOW':
                     if return_attribute(exc,'quantitativeReference'):
                         cf_IO = 1
                     elif return_attribute(exc,'avoidedProduct'):
                         cf_IO = -1
-                    else:
+                    elif return_attribute(exc,'input') == False:
                         print("Coproduct "+str(return_attribute(exc,('flow','name')))+" related to process "+str(return_attribute(p_json,'name'))+"unspecified avoided\nExchange not extracted in brightway !!!")
                         continue
+                
+                if return_attribute(exc,'amountFormula') is None:
+                    formule = None
+                else:
+                    if cf_IO == -1:
+                        formule = str("-(")+return_attribute(exc,'amountFormula')+str(")")
+                    else:
+                        formule = str("")+return_attribute(exc,'amountFormula')
                 exc_arg = {
                     'flow': return_attribute(exc,('flow','@id')),
                     'name': return_attribute(exc,('flow','name')),
                     'unit': normalize_unit(return_attribute(exc,('unit','name'))),
                     'unit_id': return_attribute(exc,('unit','@id')),
                     'comment': return_attribute(exc,'descrition'),
-                    'formula': return_attribute(exc,'amountFormula'),
+                    'formula': formule,
                     'amount': return_attribute(exc,'amount') * cf_IO
                     }
                 if return_attribute(exc,'quantitativeReference'):
@@ -270,21 +278,28 @@ class ClientAll(ClientData):
                             cf_IO = -1
                         if return_attribute(exc,'input') == True and return_attribute(exc,('flow','categoryPath'))[1] != 'Resource':
                             cf_IO = -1
-                    if return_attribute(exc,('flow','flowType')) == 'PRODUCT_FLOW' and return_attribute(exc,'input') == False:
+                    if return_attribute(exc,('flow','flowType')) == 'PRODUCT_FLOW':
                         if return_attribute(exc,'quantitativeReference'):
                             cf_IO = 1
                         elif return_attribute(exc,'avoidedProduct'):
                             cf_IO = -1
-                        else:
+                        elif return_attribute(exc,'input') == False:
                             print("Coproduct "+str(return_attribute(exc,('flow','name')))+" related to process "+str(return_attribute(p_json,'name'))+"unspecified avoided\nExchange not extracted in brightway !!!")
                             continue
+                    if return_attribute(exc,'amountFormula') is None:
+                        formule = None
+                    else:
+                        if cf_IO == -1:
+                            formule = str("-(")+return_attribute(exc,'amountFormula')+str(")")
+                        else:
+                            formule = str("")+return_attribute(exc,'amountFormula')
                     exc_arg = {
                         'flow': return_attribute(exc,('flow','@id')),
                         'name': return_attribute(exc,('flow','name')),
                         'unit': normalize_unit(return_attribute(exc,('unit','name'))),
                         'unit_id': return_attribute(exc,('unit','@id')),
                         'comment': return_attribute(exc,'descrition'),
-                        'formula': return_attribute(exc,'amountFormula'),
+                        'formula': formule,
                         'amount': return_attribute(exc,'amount') * cf_IO
                         }
                     if return_attribute(exc,'quantitativeReference'):

@@ -1,0 +1,5 @@
+olca-ipc
+brightway2
+urllib3
+pyprind
+pandas
