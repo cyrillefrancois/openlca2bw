@@ -38,10 +38,11 @@ Others options are available in this function:
 - user_databases: dictionnary -> a dictionnary with keys representing the brightway databases names and the values for each key representing the list of openLCA folders related
 - excluded_folders: list -> a list of openLCA folders names that will not be imported
 - exclude_S: boolean -> if True the program will not import nonuser processes that are System process (LCI) if a corresponding Unit process is available, the importation of a full System process databse is long (3 hours for EcoInvent) 
+- selected_methods: list or all -> a list of LCIA methods in OpenLCA that will be imported. The default value is 'all' to import all methods present, an empty list not will import any method
 
 > load_openLCA_IPC(port = 8080, project_name="Open_imports",overwrite=False, 
 >                     nonuser_db_name = 'EcoInvent',check_nonuser_exc=False,
->                     user_databases={},excluded_folders=[], exclude_S=False)
+>                     user_databases={},excluded_folders=[], exclude_S=False, selected_methods= all)
                      
 example to run function:
 > import openlca2bw
@@ -56,13 +57,13 @@ The update_openLCA_IPC() function only import specified elements to an existing 
 The update_databases dictionnary allows the user to specified the brightway databases that will be replaced.
 It seems complicated to only import modification, so the program delete the previous database and load the new one with specified openLCA folders.
 
-> update_openLCA_IPC(port = 8080, project_name="Open_imports",update_biosphere=False,update_methods=False,
+> update_openLCA_IPC(port = 8080, project_name="Open_imports",update_biosphere=False,update_methods=[],
 >                     update_databases={}, exclude_S=False)
 
 - port: integer -> to specified the IPC port value if it is different than 8080
 - project_name: string -> the name of the brightway project that will be updated
 - update_biosphere: boolean -> if True the program import all elementary flows and replace the existing 'biosphere3' database in brightway
-- update_methods: boolean -> if True the program will import LCIA methods and write the new methods or replace an old one if same differents are presents
+- update_methods: list -> indicate in a list LCIA methods to be imported or updated. To import no method specify an empty list.The program will import LCIA methods and write the new methods or replace old ones if some differents are presents
 - update_databases: dictionnary -> a dictionnary with keys representing the brightway databases names and the values for each key representing the list of openLCA folders related (see previous user_databases format)
 - exclude_S: boolean -> if True the program will not import nonuser processes that are System process (LCI) if a corresponding Unit process is available, the importation of a full System process databse is long (3 hours for EcoInvent) 
 
@@ -75,7 +76,7 @@ The load_openLCA_Json() function work similarly than load_openLCA_IPC but the pa
 To create a all new brightway project you need to export from OpenLCA all the flows, the processes, the LCIA methods and properties (unit, flows properties and locations)
 
 Others options are available in this function:
-- path_zip: string -> the complete path to your zip file
+- path_zip: string -> the complete path to your zip file or to the directory with all extrated folders. 
 - project_name: string -> the name of the brightway project that will contain your openlca database
 - overwrite: boolean -> True to overwrite an existing brightway project with the same name
 - nonuser_db_name: string -> the name of the brightway database that will contain the nonuser database (processes that are not specified in the user_databases folders)
@@ -83,10 +84,11 @@ Others options are available in this function:
 - user_databases: dictionnary -> a dictionnary with keys representing the brightway databases names and the values for each key representing the list of openLCA folders related
 - excluded_folders: list -> a list of openLCA folders names that will not be imported
 - exclude_S: boolean -> if True the program will not import nonuser processes that are System process (LCI) if a corresponding Unit process is available, the importation of a full System process databse is long (3 hours for EcoInvent) 
+- selected_methods: list or all -> a list of LCIA methods in OpenLCA that will be imported. The default value is 'all' to import all methods present, an empty list not will import any method
 
 >load_openLCA_Json(path_zip=str, project_name="Open_imports",overwrite=False, 
 >                     nonuser_db_name = 'EcoInvent',check_nonuser_exc=False,
->                     user_databases={},excluded_folders=[], exclude_S=False) 
+>                     user_databases={},excluded_folders=[], exclude_S=False, selected_methods = all) 
 
 example to run function:
 > import openlca2bw
@@ -95,27 +97,32 @@ example to run function:
 >
 > #after exporting json zip from OpenLCA
 >
-> load_openLCA_Json(path_zip='C:/user/userprofile/document/olcaJSON.zip',user_databases=my_dict)
+> load_openLCA_Json(path_zip=r'C:\user\userprofile\document\olcaJSON.zip',user_databases=my_dict)
 
 The update_openLCA_Json() function only import specified elements to an existing brightway project.
 The update_databases dictionnary allows the user to specified the brightway databases that will be replaced.
 It seems complicated to only import modification, so the program delete the previous database and load the new one with specified openLCA folders.
 With this function no need to export the all database from OpenLCA, only modified element con be exported
 
-> update_openLCA_Json(path_zip=str, project_name="Open_imports",update_biosphere=False,update_methods=False,
+> update_openLCA_Json(path_zip=str, project_name="Open_imports",update_biosphere=False,update_methods=[],
 >                     update_databases={}, exclude_S=False)
 
 - path_zip: string -> the complete path to your zip file
 - project_name: string -> the name of the brightway project that will be updated
 - update_biosphere: boolean -> if True the program import all elementary flows and replace the existing 'biosphere3' database in brightway
-- update_methods: boolean -> if True the program will import LCIA methods and write the new methods or replace an old one if same differents are presents
+- update_methods: list -> indicate in a list LCIA methods to be imported or updated. To import no method specify an empty list.The program will import LCIA methods and write the new methods or replace old ones if some differents are presents
 - update_databases: dictionnary -> a dictionnary with keys representing the brightway databases names and the values for each key representing the list of openLCA folders related (see previous user_databases format)
 - exclude_S: boolean -> if True the program will not import nonuser processes that are System process (LCI) if a corresponding Unit process is available, the importation of a full System process databse is long (3 hours for EcoInvent) 
 
+
+OpenLCA has many specificities and this package may not handle all of them.
+For instance, a technological exchange without a specified provider that can be satisfy by several activities is deleted frmo the activity (a single provider is retrieve). LCA model in OpenLCA need to be completly defined. 
 
                  
 OpenLCA database has many exceptions and depending on your database some errors may araise. Feel free to share issues and potential correction.
 
 Next steps for this package :
+- Apply allocation factors when importing
+- Write processes and data from brightway2 to OpenLCA
 - Errors and exceptions corrections
 - Computing and coding optimization

@@ -1,5 +1,6 @@
 olca-ipc
 brightway2
+stats_arrays
 urllib3
 pyprind
 pandas

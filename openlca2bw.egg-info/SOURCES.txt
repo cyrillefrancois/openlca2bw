@@ -1,7 +1,11 @@
 README.md
 setup.py
+openlca2bw/IPC_Extractor.py
+openlca2bw/Json_Extractor.py
 openlca2bw/__init__.py
+openlca2bw/allocation.py
 openlca2bw/bw_write.py
+openlca2bw/extract.py
 openlca2bw/main.py
 openlca2bw/utils.py
 openlca2bw.egg-info/PKG-INFO
@@ -9,9 +13,7 @@ openlca2bw.egg-info/SOURCES.txt
 openlca2bw.egg-info/dependency_links.txt
 openlca2bw.egg-info/requires.txt
 openlca2bw.egg-info/top_level.txt
-openlca2bw/IPC_protocol/__init__.py
-openlca2bw/IPC_protocol/ipc_extration.py
-openlca2bw/IPC_protocol/tables.py
-openlca2bw/json_protocol/__init__.py
-openlca2bw/json_protocol/data.py
-openlca2bw/json_protocol/json_extraction.py
+openlca2bw/__pycache__/__init__.cpython-36.pyc
+openlca2bw/__pycache__/bw_write.cpython-36.pyc
+openlca2bw/__pycache__/main.cpython-36.pyc
+openlca2bw/__pycache__/utils.cpython-36.pyc
