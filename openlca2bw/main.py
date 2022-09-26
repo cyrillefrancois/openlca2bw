@@ -33,7 +33,7 @@ def load_openLCA_IPC(port = 8080, project_name="Open_imports",overwrite=False,
         print("Project {} already exists and overwrite is False".format(project_name))
         return
     if project_name in list(bw.databases) and overwrite == True:
-        bw.projects.delete_project(project_name)
+        bw.projects.delete_project(project_name, delete_dir=True)
     bw.projects.set_current(project_name)
     print("Project "+project_name+ " created on brightway environment\n")
     
@@ -152,7 +152,7 @@ def load_openLCA_Json(path_zip=str, project_name="Open_imports",overwrite=False,
         print("Project {} already exists and overwrite is False".format(project_name))
         return
     if project_name in list(bw.databases) and overwrite == True:
-        bw.projects.delete_project(project_name)
+        bw.projects.delete_project(project_name, delete_dir=True)
     bw.projects.set_current(project_name)
     print("Project "+project_name+ " created on brightway environment\n")
     
