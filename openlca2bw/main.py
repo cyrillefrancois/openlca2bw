@@ -35,6 +35,11 @@ def load_openLCA_IPC(port = 8080, project_name="Open_imports",overwrite=False,
     if project_name in list(bw.databases) and overwrite == True:
         bw.projects.delete_project(project_name, delete_dir=True)
     bw.projects.set_current(project_name)
+    #projects don't seems to be completly deleted with delete_project
+    for db in list(bw.databases):
+        del bw.databases[db]
+    for m in list(bw.methods):
+        del bw.methods[m]
     print("Project "+project_name+ " created on brightway environment\n")
     
     #Biosphere creation
@@ -154,6 +159,11 @@ def load_openLCA_Json(path_zip=str, project_name="Open_imports",overwrite=False,
     if project_name in list(bw.databases) and overwrite == True:
         bw.projects.delete_project(project_name, delete_dir=True)
     bw.projects.set_current(project_name)
+    #projects don't seems to be completly deleted with delete_project
+    for db in list(bw.databases):
+        del bw.databases[db]
+    for m in list(bw.methods):
+        del bw.methods[m]
     print("Project "+project_name+ " created on brightway environment\n")
     
     #Extract and open json Zip
