@@ -32,7 +32,7 @@ def test_load_openLCA_Json():
 
     olca2bw.load_openLCA_Json(path_zip=os.path.join(TESTDIR,TESTDATABASE),
                             project_name='MLDB',
-                            nonuser_db_name = ' MLDB',
+                            nonuser_db_name = 'MLDB',
                             overwrite = True, verbose=True)
                             
     bio = bw.Database('bioshpere3')
