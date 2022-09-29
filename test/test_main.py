@@ -10,8 +10,8 @@ to run coverage tests, run py.test --cov-report term-missing --cov=openlca2bw
 
 """
 
-import openlca2bw
-import brightways2 as bw
+import openlca2bw as olca2bw
+import brightway2 as bw
 import pytest
 import os
 
@@ -30,7 +30,7 @@ TESTDATABASE = r'OLCAdb_demo'
 
 def test_load_openLCA_Json():
 
-    olca2bw.load_openLCA_Json(path_zip=TESTDATABASE,
+    olca2bw.load_openLCA_Json(path_zip=os.path.join(TESTDIR,TESTDATABASE),
                             project_name='MLDB',
                             nonuser_db_name = ' MLDB',
                             overwrite = True, verbose=True)

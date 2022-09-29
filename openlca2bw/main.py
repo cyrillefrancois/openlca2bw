@@ -21,22 +21,26 @@ def load_openLCA_IPC(port = 8080, project_name="Open_imports",overwrite=False,
 
     Args
     ----------
+    port : int
+        Number of IPC Server previously open in OpenLCA
     project_name : str
         Name of the brightway project. If it doesn't exist, it gets created and set as current by the end of the routine.
     overwrite : Bool
-        overwrites existing database with the same name. 
+        Overwrites existing database with the same name. 
     nonuser_db_name : str
-        Name for the BW database to import all Categories in the project, if `user_databases` for specific import of OpenLCA categories is not specified as nput.
+        Name for the BW database to import all Processes of the project that are not include in `user_databases` folders.
     check_nonuser_exc : Bool
-        ?
+        Launch the verification of all exchanges in the non-users databases, if exchanges units are coherent.
     user_databases : dict
-        Dictionary consisting of OpenLCA Category folders as keys, and new database names to import it as in brightway as values. 
+        Dictionary consisting of new brightway database name as keys, and the list of OpenLCA Category folders (root folders) as values (could be just a name). For example: {'FirstDatabase': ['Folder1','Folder2'],'SecondDatabase': 'Folder3'}. 
     excluded_folders : list 
-        List of OpenLCA Category folders names as strings to exclude from import.
+        List of OpenLCA Category folders (root folders) names as strings to exclude from import.
     exclude_s : Bool
-        ?
+        When using both 'Unit process' and 'System process', when excluding System processes (exclude_S = True), the import will prioritize Unit process when it exist. Save large amount of time.
     selected_methods : 
-        ?
+        List of OpenLCA LCIA methods names as strings that will be imported in brightway. default value is 'all'.
+    verbose : Bool
+        Print all exchanges deleted due to provider issue
 
     Returns
     -------
@@ -120,21 +124,23 @@ def update_openLCA_IPC(port = 8080, project_name="Open_imports",update_biosphere
     Args
     ----------
     port : int
-        ?
+        Number of IPC Server previously open in OpenLCA
     project_name : str
-        Name of the brightway project. If it doesn't exist, it gets created and set as current by the end of the routine.
+        Name of the brightway project. Projects need to be created before. It will be set as current by the end of the routine.
     update_biosphere : Bool
-        Update the biosphere boolean.
+        Update the biosphere boolean by importing all OpenLCA Elementary Flows.
     update_methods : Bool
-        ?
+        List of OpenLCA LCIA methods names as strings that will be imported in brightway. 
     update_databases : dict
-        Dictionary consisting of OpenLCA Category folders as keys, and new database names to import it as in brightway as values. 
+        Dictionary consisting of brightway database name as keys, and the list of OpenLCA Category folders (root folders) as values (could be just a name). If brightway database already exist it will be replaced, else it will be created.
     excluded_S : Bool
-        ?
+        When using both 'Unit process' and 'System process', when excluding System processes (exclude_S = True), the import will prioritize Unit process when it exist. Save large amount of time.
+    verbose : Bool
+        Print all exchanges deleted due to provider issue
 
     Returns
     -------
-    None
+    No returns, just activates the brightway project specified with the imported database loaded into it.
     '''
     
     #Create connection with the OpenLCA IPC protocol
@@ -209,23 +215,25 @@ def load_openLCA_Json(path_zip=str, project_name="Open_imports",overwrite=False,
     Args
     ----------
     path_zip : str
-        Path to the folder containing the unziped database exported from OpenLCA in Json-LD format.
+        Path to the zip file, or to the folder containing the unziped database, exported from OpenLCA in Json-LD format.
     project_name : str
         Name of the brightway project. If it doesn't exist, it gets created and set as current by the end of the routine.
     overwrite : Bool
-        overwrites existing database with the same name. 
+        Overwrites existing database with the same name. 
     nonuser_db_name : str
-        Name for the BW database to import all Categories in the project, if `user_databases` for specific import of OpenLCA categories is not specified as nput.
+        Name for the BW database to import all Processes of the project that are not include in `user_databases` folders.
     check_nonuser_exc : Bool
-        ?
+        Launch the verification of all exchanges in the non-users databases, if exchanges units are coherent.
     user_databases : dict
-        Dictionary consisting of OpenLCA Category folders as keys, and new database names to import it as in brightway as values. 
+        Dictionary consisting of new brightway database name as keys, and the list of OpenLCA Category folders (root folders) as values (could be just a name). For example: {'FirstDatabase': ['Folder1','Folder2'],'SecondDatabase': 'Folder3'}. 
     excluded_folders : list 
-        List of OpenLCA Category folders names as strings to exclude from import.
+        List of OpenLCA Category folders (root folders) names as strings to exclude from import.
     exclude_s : Bool
-        ?
+        When using both 'Unit process' and 'System process', when excluding System processes (exclude_S = True), the import will prioritize Unit process when it exist. Save large amount of time.
     selected_methods : 
-        ?
+        List of OpenLCA LCIA methods names as strings that will be imported in brightway. default value is 'all'.
+    verbose : Bool
+        Print all exchanges deleted due to provider issue
 
     Returns
     -------
@@ -306,19 +314,21 @@ def update_openLCA_Json(path_zip=str, project_name="Open_imports",update_biosphe
     path_zip : int
         Path to the folder containing the unziped database exported from OpenLCA in Json-LD format.
     project_name : str
-        Name of the brightway project. 
+        Name of the brightway project. Projects need to be created before. It will be set as current by the end of the routine.
     update_biosphere : Bool
-        Update the biosphere boolean.
+        Update the biosphere boolean by importing all OpenLCA Elementary Flows.
     update_methods : Bool
-        ?
+        List of OpenLCA LCIA methods names as strings that will be imported in brightway. 
     update_databases : dict
-        Dictionary consisting of OpenLCA Category folders as keys, and new database names to import it as in brightway as values. 
+        Dictionary consisting of brightway database name as keys, and the list of OpenLCA Category folders (root folders) as values (could be just a name). If brightway database already exist it will be replaced, else it will be created.
     excluded_S : Bool
-        ?
+        When using both 'Unit process' and 'System process', when excluding System processes (exclude_S = True), the import will prioritize Unit process when it exist. Save large amount of time.
+    verbose : Bool
+        Print all exchanges deleted due to provider issue
 
     Returns
     -------
-    None
+    No returns, just activates the brightway project specified with the imported database loaded into it.
     '''
     
     #Select the brightway project
