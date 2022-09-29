@@ -1,0 +1,1 @@
+{"@context":"http://greendelta.github.io/olca-schema/context.jsonld","@type":"Location","@id":"64ca6097-2a6e-3926-91c4-b9d31080c687","name":"Djibouti","description":"\n","version":"00.00.003","lastChange":"2022-08-31T14:40:59.773-06:00","code":"DJ","latitude":11.9,"longitude":42.51,"geometry":{"type":"Point","coordinates":[11.9,42.51]}}

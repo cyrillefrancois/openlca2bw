@@ -1,0 +1,1 @@
+{"@context":"http://greendelta.github.io/olca-schema/context.jsonld","@type":"ImpactMethod","@id":"f95fcf28-7897-4eb6-b832-4db5a92d16cf","name":"Mac IAM","description":"","version":"00.00.001","lastChange":"2022-08-29T17:47:45.711-06:00","impactCategories":[{"@type":"ImpactCategory","@id":"6ff74fb6-3d8e-4c2e-ba7e-64e2fd4376c4","name":"Global warming","refUnit":"kg CO2 eq"}]}

@@ -1,0 +1,1 @@
+{"@context":"http://greendelta.github.io/olca-schema/context.jsonld","@type":"FlowProperty","@id":"65d0b9d1-3295-4e2d-8b1c-71ef05c71fe2","name":"Mass","description":"","version":"00.00.000","lastChange":"2022-08-29T17:36:10.974-06:00","flowPropertyType":"PHYSICAL_QUANTITY","unitGroup":{"@type":"UnitGroup","@id":"1c295b77-3a44-4192-be6e-c4981f37fde9","name":"Units of mass"}}
