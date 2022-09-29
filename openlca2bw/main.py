@@ -14,7 +14,8 @@ from urllib3.connection import HTTPConnection
 
 def load_openLCA_IPC(port = 8080, project_name="Open_imports",overwrite=False, 
                      nonuser_db_name = 'EcoInvent',check_nonuser_exc=False,
-                     user_databases={},excluded_folders=[], exclude_S=False, selected_methods= all):
+                     user_databases={},excluded_folders=[], exclude_S=False, selected_methods= all,
+                     verbose=False):
     '''
     Function to load an OpenLCA database, when OpenLCA and IPC are both active.
 
@@ -98,7 +99,7 @@ def load_openLCA_IPC(port = 8080, project_name="Open_imports",overwrite=False,
         write_db.write(dict(zip([(db,p['code']) for p in list_process],list_process)))
 
     #Provider finder, retrieve provider in case of unspecified and single provider. Activity deleted if several providers
-    single_provider_retriver(dict_missed_providers)
+    single_provider_retriver(dict_missed_providers, verbose=verbose)
     
     #Check the uniformity of unit for exchange
     #Brightway don't handle the unit conversion
@@ -201,7 +202,7 @@ def update_openLCA_IPC(port = 8080, project_name="Open_imports",update_biosphere
 
 def load_openLCA_Json(path_zip=str, project_name="Open_imports",overwrite=False, 
                      nonuser_db_name = 'EcoInvent',check_nonuser_exc=False,
-                     user_databases={},excluded_folders=[], exclude_S=False, selected_methods = all):
+                     user_databases={},excluded_folders=[], exclude_S=False, selected_methods = all, verbose=False):
     '''
     Function to load an OpenLCA database that has been exported as a Json-LD zip file and uncompressed.
 
@@ -281,7 +282,7 @@ def load_openLCA_Json(path_zip=str, project_name="Open_imports",overwrite=False,
         write_db.write(dict(zip([(db,p['code']) for p in list_process],list_process)))
 
     #Provider finder, retrieve provider in case of unspecified and single provider. Activity deleted if several providers
-    single_provider_retriver(dict_missed_providers)
+    single_provider_retriver(dict_missed_providers, verbose=verbose)
     #The complete checking of units for large database like EcoInvent is long
     #To run the checking specify the input "check_nonuser_exc" with True
     #EcoInvent don't have issue with units (as far as I know)
@@ -297,7 +298,7 @@ def load_openLCA_Json(path_zip=str, project_name="Open_imports",overwrite=False,
     
     
 def update_openLCA_Json(path_zip=str, project_name="Open_imports",update_biosphere=False,update_methods=[],
-                     update_databases={}, exclude_S=False):
+                     update_databases={}, exclude_S=False, verbose=False):
     '''
 
     Args
@@ -377,7 +378,7 @@ def update_openLCA_Json(path_zip=str, project_name="Open_imports",update_biosphe
         user_db = bw.Database(db)
         user_db.write(dict(zip([(db,l['code']) for l in dict_processes[db]],dict_processes[db])))
     #Provider finder, retrieve provider in case of unspecified and single provider. Activity deleted if several providers
-    single_provider_retriver(list_missed_providers)
+    single_provider_retriver(list_missed_providers, verbose=verbose)
     #Check the uniformity of unit for exchange
     #Brightway don't handle the unit conversion
     #for example error appears when electricity production is express per kWh but it's use as input with other units (ex: MJ)
