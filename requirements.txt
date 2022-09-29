@@ -1,0 +1,12 @@
+bw2analyzer<0.10.99
+bw2calc==1.8.1
+bw2data<3.99
+bw2io<0.8.9
+bw2parameters>=0.6.5
+olca-ipc
+stats_arrays
+urllib3
+pyprind
+pandas
+requests
+future

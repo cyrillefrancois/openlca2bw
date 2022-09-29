@@ -14,7 +14,35 @@ from urllib3.connection import HTTPConnection
 
 def load_openLCA_IPC(port = 8080, project_name="Open_imports",overwrite=False, 
                      nonuser_db_name = 'EcoInvent',check_nonuser_exc=False,
-                     user_databases={},excluded_folders=[], exclude_S=False, selected_methods= all):
+                     user_databases={},excluded_folders=[], exclude_S=False, selected_methods= all,
+                     verbose=False):
+    '''
+    Function to load an OpenLCA database, when OpenLCA and IPC are both active.
+
+    Args
+    ----------
+    project_name : str
+        Name of the brightway project. If it doesn't exist, it gets created and set as current by the end of the routine.
+    overwrite : Bool
+        overwrites existing database with the same name. 
+    nonuser_db_name : str
+        Name for the BW database to import all Categories in the project, if `user_databases` for specific import of OpenLCA categories is not specified as nput.
+    check_nonuser_exc : Bool
+        ?
+    user_databases : dict
+        Dictionary consisting of OpenLCA Category folders as keys, and new database names to import it as in brightway as values. 
+    excluded_folders : list 
+        List of OpenLCA Category folders names as strings to exclude from import.
+    exclude_s : Bool
+        ?
+    selected_methods : 
+        ?
+
+    Returns
+    -------
+    No returns, just activates the brightway project specified with the imported database loaded into it.
+    '''
+
     #Create connection with the OpenLCA IPC protocol
     try:
          HTTPConnection(host='localhost', port=port).connect()
@@ -71,7 +99,7 @@ def load_openLCA_IPC(port = 8080, project_name="Open_imports",overwrite=False,
         write_db.write(dict(zip([(db,p['code']) for p in list_process],list_process)))
 
     #Provider finder, retrieve provider in case of unspecified and single provider. Activity deleted if several providers
-    single_provider_retriver(dict_missed_providers)
+    single_provider_retriver(dict_missed_providers, verbose=verbose)
     
     #Check the uniformity of unit for exchange
     #Brightway don't handle the unit conversion
@@ -86,6 +114,29 @@ def load_openLCA_IPC(port = 8080, project_name="Open_imports",overwrite=False,
 
 def update_openLCA_IPC(port = 8080, project_name="Open_imports",update_biosphere=False,update_methods=[],
                      update_databases={}, exclude_S=False):
+    '''
+    Create connection with the OpenLCA IPC protocol
+
+    Args
+    ----------
+    port : int
+        ?
+    project_name : str
+        Name of the brightway project. If it doesn't exist, it gets created and set as current by the end of the routine.
+    update_biosphere : Bool
+        Update the biosphere boolean.
+    update_methods : Bool
+        ?
+    update_databases : dict
+        Dictionary consisting of OpenLCA Category folders as keys, and new database names to import it as in brightway as values. 
+    excluded_S : Bool
+        ?
+
+    Returns
+    -------
+    None
+    '''
+    
     #Create connection with the OpenLCA IPC protocol
     try:
          HTTPConnection(host='localhost', port=port).connect()
@@ -151,7 +202,36 @@ def update_openLCA_IPC(port = 8080, project_name="Open_imports",update_biosphere
 
 def load_openLCA_Json(path_zip=str, project_name="Open_imports",overwrite=False, 
                      nonuser_db_name = 'EcoInvent',check_nonuser_exc=False,
-                     user_databases={},excluded_folders=[], exclude_S=False, selected_methods = all):
+                     user_databases={},excluded_folders=[], exclude_S=False, selected_methods = all, verbose=False):
+    '''
+    Function to load an OpenLCA database that has been exported as a Json-LD zip file and uncompressed.
+
+    Args
+    ----------
+    path_zip : str
+        Path to the folder containing the unziped database exported from OpenLCA in Json-LD format.
+    project_name : str
+        Name of the brightway project. If it doesn't exist, it gets created and set as current by the end of the routine.
+    overwrite : Bool
+        overwrites existing database with the same name. 
+    nonuser_db_name : str
+        Name for the BW database to import all Categories in the project, if `user_databases` for specific import of OpenLCA categories is not specified as nput.
+    check_nonuser_exc : Bool
+        ?
+    user_databases : dict
+        Dictionary consisting of OpenLCA Category folders as keys, and new database names to import it as in brightway as values. 
+    excluded_folders : list 
+        List of OpenLCA Category folders names as strings to exclude from import.
+    exclude_s : Bool
+        ?
+    selected_methods : 
+        ?
+
+    Returns
+    -------
+    No returns, just activates the brightway project specified with the imported database loaded into it.
+    '''
+
     #Create or replace the brightway project
     if project_name in bw.projects and overwrite == False:
         print("Project {} already exists and overwrite is False".format(project_name))
@@ -202,7 +282,7 @@ def load_openLCA_Json(path_zip=str, project_name="Open_imports",overwrite=False,
         write_db.write(dict(zip([(db,p['code']) for p in list_process],list_process)))
 
     #Provider finder, retrieve provider in case of unspecified and single provider. Activity deleted if several providers
-    single_provider_retriver(dict_missed_providers)
+    single_provider_retriver(dict_missed_providers, verbose=verbose)
     #The complete checking of units for large database like EcoInvent is long
     #To run the checking specify the input "check_nonuser_exc" with True
     #EcoInvent don't have issue with units (as far as I know)
@@ -218,7 +298,29 @@ def load_openLCA_Json(path_zip=str, project_name="Open_imports",overwrite=False,
     
     
 def update_openLCA_Json(path_zip=str, project_name="Open_imports",update_biosphere=False,update_methods=[],
-                     update_databases={}, exclude_S=False):
+                     update_databases={}, exclude_S=False, verbose=False):
+    '''
+
+    Args
+    ----------
+    path_zip : int
+        Path to the folder containing the unziped database exported from OpenLCA in Json-LD format.
+    project_name : str
+        Name of the brightway project. 
+    update_biosphere : Bool
+        Update the biosphere boolean.
+    update_methods : Bool
+        ?
+    update_databases : dict
+        Dictionary consisting of OpenLCA Category folders as keys, and new database names to import it as in brightway as values. 
+    excluded_S : Bool
+        ?
+
+    Returns
+    -------
+    None
+    '''
+    
     #Select the brightway project
     if project_name not in bw.projects:
         print("Project {} not present in brightway".format(project_name))
@@ -276,7 +378,7 @@ def update_openLCA_Json(path_zip=str, project_name="Open_imports",update_biosphe
         user_db = bw.Database(db)
         user_db.write(dict(zip([(db,l['code']) for l in dict_processes[db]],dict_processes[db])))
     #Provider finder, retrieve provider in case of unspecified and single provider. Activity deleted if several providers
-    single_provider_retriver(list_missed_providers)
+    single_provider_retriver(list_missed_providers, verbose=verbose)
     #Check the uniformity of unit for exchange
     #Brightway don't handle the unit conversion
     #for example error appears when electricity production is express per kWh but it's use as input with other units (ex: MJ)
