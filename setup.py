@@ -6,6 +6,8 @@ import versioneer
 from codecs import open
 from os import path
 
+here = path.abspath(path.dirname(__file__))
+
 import sys
 sys.path.insert(0, here)  # make sure local files are available to an isolated build
 
