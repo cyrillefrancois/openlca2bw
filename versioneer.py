@@ -1710,7 +1710,7 @@ class VersioneerBadRootError(Exception):
     """The project root directory is unknown or missing key files."""
 
 
-def get_versions(verbose=False):
+def get_versions(verbose=True):
     """Get the project version from whatever source is available.
 
     Returns dict with two keys: 'version' and 'full'.
