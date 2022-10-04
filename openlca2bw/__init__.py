@@ -7,3 +7,5 @@ from .IPC_Extractor import IPC_Extractor
 from .Json_Extractor import Json_Extractor
 from .extract import Extraction_functions
 from .allocation import convert_alloc_factor, split_Multioutputs_Process
+from . import _version
+__version__ = _version.get_versions()['version']

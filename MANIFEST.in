@@ -1,0 +1,2 @@
+include openlca2bw/_version.py
+include versioneer.py
