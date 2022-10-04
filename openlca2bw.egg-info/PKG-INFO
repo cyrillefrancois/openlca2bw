@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: openlca2bw
-Version: 0+untagged.38.g31cdaa6.dirty
+Version: 0+untagged.40.g13792c0.dirty
 Summary: A Python package to extract and write an LCA database from OpenLCA to Brightway2
 Home-page: https://github.com/cyrillefrancois/openlca2bw
 Author: Cyrille François
