@@ -3,7 +3,13 @@
 This is a Python package to import OpenLCA database to the brightway python environment
 
 To install:
-Direct from github
+
+From Pypi
+
+> pip install openlca2bw
+
+
+From github
 
 > pip install git+https://github.com/cyrillefrancois/openlca2bw
 
