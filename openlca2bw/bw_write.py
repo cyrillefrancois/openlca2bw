@@ -11,6 +11,7 @@ from .utils import return_attribute, flattenNestedList, main_flow_table, change_
 from bw2io.importers.base_lci import LCIImporter
 from bw2data.parameters import ActivityParameter
 from bw2io.strategies import normalize_units, drop_unspecified_subcategories
+from pathlib import Path
 
 class OpenLCABiosphereImporter(LCIImporter):
     format = 'Ecoinvent XML'
@@ -92,6 +93,22 @@ def import_parameters(all_parameters,list_process_parameters,change_param):
         bw.parameters.add_exchanges_to_group(process[1], process)
         ActivityParameter.recalculate_exchanges(process[1])        
 
+def check_elementary_exchanges(dict_processes):
+    print("Checking for wrong elementary flows ids\n")
+    i = 0
+    with open(Path(__file__).parent.resolve()/"change_elem_flows.json") as json_file:
+        flows_ids_dict = json.load(json_file)
+    for db in dict_processes.keys():
+        for act in dict_processes[db]:
+            for exc in act['exchanges']:
+                if exc['flow'] in flows_ids_dict.keys():
+                    i+=1
+                    exc['flow'] = flows_ids_dict[exc['flow']]
+                    exc['input'] = (exc['input'][0], exc['flow'])
+                    
+    print(str(i)+" exchanges modified to match correct elementary flow")
+    return dict_processes
+    
 def check_exchanges_units(conv_factors, databases_names):
     print("Units checking for activities exchanges\n")
     i = 0

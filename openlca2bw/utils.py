@@ -13,6 +13,9 @@ from enum import Enum
 from numbers import Number
 from bw2io.errors import UnsupportedExchange
 from stats_arrays import UndefinedUncertainty, NoUncertainty, NormalUncertainty, LognormalUncertainty, TriangularUncertainty, UniformUncertainty
+import subprocess
+import sys
+from importlib.metadata import version
 
 #unit normalization based on bw2io-0.9.DEV9, issues with previous version
 UNITS_NORMALIZATION = {
@@ -69,6 +72,24 @@ normalize_units = lambda x: UNITS_NORMALIZATION.get(
 )
 
 
+def check_OpenLCA_version(module):
+    client = module.Client()
+    test = client.find(module.FlowProperty, 'Mass')
+    if test is None:
+        if module.__name__ == "olca":
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install', "olca-ipc==2.0.1"])
+            print("2.x version of openLCA, olca-ipc version changed")
+            import olca_schema as olca
+            import olca_ipc as ipc
+            olca.Client = ipc.Client
+        else:
+            subprocess.check_call([sys.executable, '-m', 'pip', 'install', "olca-ipc==0.0.12"])
+            print("1.x version of openLCA, olca-ipc version changed")
+            import olca
+        return olca
+    else:
+        return module
+
 def flattenNestedList(nestedList):
     ''' Converts a nested list to a flat list '''
     flatList = []
@@ -115,7 +136,7 @@ def ref_flow(process,name = False):
     else:
         ref_exc = [return_attribute(exc,'flow') 
                 for exc in return_attribute(process,'exchanges') 
-                if return_attribute(exc,'quantitativeReference')]
+                if (return_attribute(exc,'quantitativeReference') or return_attribute(exc,'isQuantitativeReference'))]
         if len(ref_exc) != 1:
             print("Zero or multiple reference flow for process"+return_attribute(process,"name"))
             return(None)
@@ -127,14 +148,18 @@ def ref_flow(process,name = False):
 def root_folder(process):
     if not isinstance(process, dict):
         p_category = return_attribute(process,"categoryPath")
+        if p_category is None:
+            p_category = return_attribute(process,"category")
     else:
         p_category = return_attribute(process,("category",'categoryPath'))
         if p_category is dict or p_category is None:
-            p_category = return_attribute(process,("category",'name')) 
+            p_category = return_attribute(process,("category",'name'))
+            if p_category is None:
+                p_category = return_attribute(process,"category")
     if isinstance(p_category,list):
         return(p_category[0])
     else:
-        return(p_category)
+        return(p_category.split("/")[0])
     
 def uncertainty_convert(uncertainty_dict, negative=False):
     sign = 1
@@ -181,7 +206,8 @@ def reformulate_formule(formula):
     formula = re.sub('\^','**',formula)
     if_search = re.search(r"if\(.*\)", formula)
     if if_search is None:
-        return formula
+        formula = re.sub(r'^([^=]*)=([^=]*)$', r'\1==\2', formula)
+        return formula.lstrip()
     if_exp = reformulate_formule(if_search.group(0)[3:-1])
     if_split = if_exp.split(';')
     if len(if_split) == 3:
@@ -191,7 +217,8 @@ def reformulate_formule(formula):
         if_exp = '( ' + str(res1) + ' if ' + condition + ' else ' + res2 + ' )'
     else:
         if_exp =  if_exp
-    return formula[:if_search.start()] + if_exp + formula[if_search.end():]
+    formula = re.sub(r'^([^=]*)=([^=]*)$', r'\1==\2', formula[:if_search.start()]) + if_exp + formula[if_search.end():]
+    return formula.lstrip()
 
 
 def change_formula(formula,changes):
@@ -199,19 +226,30 @@ def change_formula(formula,changes):
         return None
     formula = reformulate_formule(formula)
     for k, v in changes.items():
-        formula = re.sub(rf'\b{k}\b',rf'{v}',formula)
+        #formula = re.sub(rf'\b{k}\b',rf'{v}',formula)
+        formula = re.sub(rf'{k}',rf'{v}',formula)
     return(formula)
 
 def change_param_names(param_names):
     changes_dict = {}
     for param in param_names:
+        if " " in param:
+            if not param.rstrip().lstrip() in param_names:
+                changes_dict.update({param: param.rstrip().lstrip()})
+                param_names = [p.rstrip().lstrip() if p == param else p for p in param_names]
+            else:
+                i = 1
+                while param.rstrip().lstrip()+"_"+str(i) in param_names:
+                    i += 1
+                changes_dict.update({param: param.rstrip().lstrip()+"_"+str(i)})
+                param_names = [p.rstrip().lstrip()+"_"+str(i) if p == param else p for p in param_names]
         if param in EXISTING_SYMBOLS:
             if not "p_"+param in param_names:
                 changes_dict.update({param: "p_"+param})
                 param_names = ["p_"+p if p == param else p for p in param_names]
             else:
                 i = 1
-                while "p"+str(i)+"_"+param.name in param_names:
+                while "p"+str(i)+"_"+param in param_names:
                     i += 1
                 changes_dict.update({param: "p"+str(i)+"_"+param})
                 param_names = ["p"+str(i)+"_"+p if p == param else p for p in param_names]
@@ -219,11 +257,11 @@ def change_param_names(param_names):
         
 def is_product(exchange):
     answer = False
-    if return_attribute(exchange,('flow','flowType')) == 'WASTE_FLOW' and return_attribute(exchange,'input') == True:
-        if return_attribute(exchange,'avoidedProduct') == False:
+    if return_attribute(exchange,('flow','flowType')) == 'WASTE_FLOW' and (return_attribute(exchange,'input') == True or return_attribute(exchange,'isInput') == True):
+        if return_attribute(exchange,'avoidedProduct') == False or return_attribute(exchange,'isAvoidedProduct') == False:
             answer = True
-    if return_attribute(exchange,('flow','flowType')) == 'PRODUCT_FLOW' and return_attribute(exchange,'input') == False:
-        if return_attribute(exchange,'avoidedProduct') == False:
+    if return_attribute(exchange,('flow','flowType')) == 'PRODUCT_FLOW' and (return_attribute(exchange,'input') == False or return_attribute(exchange,'isInput') == False):
+        if return_attribute(exchange,'avoidedProduct') == False or return_attribute(exchange,'isAvoidedProduct') == False:
             answer = True
     return(answer) 
 

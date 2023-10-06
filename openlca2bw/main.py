@@ -4,18 +4,26 @@ Created on Fri Jul  2 22:48:13 2021
 
 @author: cyrille.francois
 """
-import olca
+###import of olca module, as a combine of olca_schema and olca_ipc
+from importlib.metadata import version
+if version("olca_ipc") == "0.0.12":
+    import olca
+else:
+    import olca_schema as olca
+    import olca_ipc as ipc
+    olca.Client = ipc.Client
+
+
 import brightway2 as bw
 from . import *
 from .IPC_Extractor import IPC_Extractor
 from .Json_Extractor import Json_Extractor
 from urllib3.connection import HTTPConnection
 
-
 def load_openLCA_IPC(port = 8080, project_name="Open_imports",overwrite=False, 
                      nonuser_db_name = 'EcoInvent',check_nonuser_exc=False,
                      user_databases={},excluded_folders=[], exclude_S=False, selected_methods= all,
-                     verbose=False):
+                     verbose=False,olca_module=olca):
     '''
     Function to load an OpenLCA database, when OpenLCA and IPC are both active.
 
@@ -54,12 +62,16 @@ def load_openLCA_IPC(port = 8080, project_name="Open_imports",overwrite=False,
         print('Error with IPC connection, verify IPC connection and port in OpenLCA')
         return
 
+    print('Checking of OpenLCA version\n')
+    olca_module = check_OpenLCA_version(olca_module)
+    
     print('Creation of background tables (units, locations)\n')
     client = IPC_Extractor(port)
     client.flow_unit = client.flow_properties_unit()
     client.unit_conv = client.unit_convert_factor()
     client.location_table = client.location_convert()
     client.change_param = change_param_names([p.name for p in client.get_all(olca.Parameter) if return_attribute(p,'parameterScope') == 'GLOBAL_SCOPE'])
+    
     #Create or replace the brightway project
     if project_name in bw.projects and overwrite == False:
         print("Project {} already exists and overwrite is False".format(project_name))
@@ -117,7 +129,7 @@ def load_openLCA_IPC(port = 8080, project_name="Open_imports",overwrite=False,
     import_parameters(client.get_all(olca.Parameter),list_parameters, client.change_param)
 
 def update_openLCA_IPC(port = 8080, project_name="Open_imports",update_biosphere=False,update_methods=[],
-                     update_databases={}, exclude_S=False):
+                     update_databases={}, exclude_S=False,olca_module=olca):
     '''
     Create connection with the OpenLCA IPC protocol
 
@@ -150,12 +162,16 @@ def update_openLCA_IPC(port = 8080, project_name="Open_imports",update_biosphere
         print('Error with IPC connection, verify IPC connection and port in OpenLCA')
         return
    
+    print('Checking of OpenLCA version\n')
+    olca_module = check_OpenLCA_version(olca_module)
+   
     print('Creation of background tables (units, locations)\n')
-    client = IPC_Extractor(port)
+    client = IPC_Extractor(port,olca_module)
     client.flow_unit = client.flow_properties_unit()
     client.unit_conv = client.unit_convert_factor()
     client.location_table = client.location_convert()
-    client.change_param = change_param_names([p.name for p in client.get_all(olca.Parameter) if return_attribute(p,'parameterScope') == 'GLOBAL_SCOPE'])
+    client.change_param = change_param_names([p.name for p in client.get_all(olca_module.Parameter) if return_attribute(p,'parameterScope') == 'GLOBAL_SCOPE'])
+    
     #Select the brightway project
     if project_name not in bw.projects:
         print("Project {} not present in brightway".format(project_name))
@@ -189,6 +205,7 @@ def update_openLCA_IPC(port = 8080, project_name="Open_imports",update_biosphere
     
     print("\nImporting processes from OpenLCA\n")
     dict_processes, user_parameters, list_missed_providers = client.extract_list_process(databases_folders = update_databases,exclude_S = exclude_S, update=True)
+    dict_processes = check_elementary_exchanges(dict_processes)
     for db in list(update_databases.keys()):
         if db in list(bw.databases):
             del bw.databases[db]
@@ -203,7 +220,7 @@ def update_openLCA_IPC(port = 8080, project_name="Open_imports",update_biosphere
     
     #Parameters express in activity have to be imported separetly in brightway
     print('\nImporting parameters from OpenLCA\n')
-    import_parameters(client.get_all(olca.Parameter),user_parameters, client.change_param)
+    import_parameters(client.get_all(olca_module.Parameter),user_parameters, client.change_param)
     
 
 def load_openLCA_Json(path_zip=str, project_name="Open_imports",overwrite=False, 
@@ -382,6 +399,7 @@ def update_openLCA_Json(path_zip=str, project_name="Open_imports",update_biosphe
     print("\nImporting processes from OpenLCA\n")
     #dict_processes, user_parameters, list_missed_providers = json_db.extract_list_process(databases_names = update_databases, dict_list_id=db_list_id,exclude_S = exclude_S,update=True)
     dict_processes, user_parameters, list_missed_providers = json_db.extract_list_process(databases_folders = update_databases,exclude_S = exclude_S, update=True)
+    dict_processes = check_elementary_exchanges(dict_processes)
     for db in list(update_databases.keys()):
         if db in list(bw.databases):
             del bw.databases[db]

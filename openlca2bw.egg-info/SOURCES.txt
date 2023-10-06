@@ -9,8 +9,6 @@ requirements.txt
 setup.cfg
 setup.py
 versioneer.py
-notebooks/OLCA2BW.ipynb
-notebooks/openlca2bw.code-workspace
 openlca2bw/IPC_Extractor.py
 openlca2bw/Json_Extractor.py
 openlca2bw/__init__.py

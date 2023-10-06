@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: openlca2bw
-Version: 0+untagged.41.g5282aa0.dirty
+Version: 0.0.0
 Summary: A Python package to extract and write an LCA database from OpenLCA to Brightway2
 Home-page: https://github.com/cyrillefrancois/openlca2bw
 Author: Cyrille François
@@ -13,13 +13,25 @@ Classifier: License :: OSI Approved :: BSD License
 Classifier: Programming Language :: Python :: 3.8
 Description-Content-Type: text/markdown
 License-File: LICENSE.md
+Requires-Dist: olca-ipc
+Requires-Dist: brightway2
+Requires-Dist: stats_arrays
+Requires-Dist: urllib3
+Requires-Dist: pyprind
+Requires-Dist: pandas
 
 ## OLCA2BW package
 
 This is a Python package to import OpenLCA database to the brightway python environment
 
 To install:
-Direct from github
+
+From Pypi
+
+> pip install openlca2bw
+
+
+From github
 
 > pip install git+https://github.com/cyrillefrancois/openlca2bw
 
@@ -141,4 +153,4 @@ Next steps for this package :
 - Apply allocation factors when importing
 - Write processes and data from brightway2 to OpenLCA
 - Errors and exceptions corrections
-- Computing and coding optimization
+- Computing and coding optimization
