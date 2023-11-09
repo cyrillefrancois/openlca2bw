@@ -7,6 +7,7 @@ To install:
 From Pypi
 
 > pip install openlca2bw
+> 
 > pip install openlca2bw==1.0.0 #to upgrade
 
 
