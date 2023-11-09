@@ -21,8 +21,9 @@ setup(
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
     #version='0.1.8',
-    version=versioneer.get_version(),
-    cmdclass=versioneer.get_cmdclass(),
+    #version=versioneer.get_version(),
+    version='1.0.0',
+    #cmdclass=versioneer.get_cmdclass(),
     description='A Python package to extract and write an LCA database from OpenLCA to Brightway2',
     long_description=long_description,
     long_description_content_type='text/markdown',

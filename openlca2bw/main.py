@@ -99,10 +99,12 @@ def load_openLCA_IPC(port = 8080, project_name="Open_imports",overwrite=False,
     create_OpenLCA_LCIAmethods(client.list_methods(selected_methods))
     
     #Separation of processes based on the input "user_databases"
-    process_folders = [return_attribute(c,'name') for c in client.get_all(olca.Category) 
-                        if return_attribute(c,'modelType') == 'PROCESS' 
-                            and return_attribute(c,'category') is None
-                            and return_attribute(c,'name') not in excluded_folders]
+    #process_folders = [return_attribute(c,'name') for c in client.get_all(olca.Category) 
+    #                    if return_attribute(c,'modelType') == 'PROCESS' 
+    #                        and return_attribute(c,'category') is None
+    #                        and return_attribute(c,'name') not in excluded_folders]
+    process_folders = list(set([root_folder(p) for p in client.get_descriptors(olca.Process)
+                            if root_folder(p) not in excluded_folders]))
     databases_folders = {**{nonuser_db_name: [c for c in process_folders if c not in flattenNestedList(list(user_databases.values()))]},
                     **user_databases}
     

@@ -4,7 +4,7 @@ bw2data<3.99
 bw2io<0.8.9
 bw2parameters==0.6.6
 olca-ipc
-olca-schema
+olca-schema==0.0.12
 stats_arrays
 urllib3
 pyprind
